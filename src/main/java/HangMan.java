@@ -1,62 +1,85 @@
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Arrays;
+import java.util.Scanner;
 
 public class HangMan {
-    //Array with words to be used in game
-    String[] cities = { "madrid", "jeddah", "nairobi", "johannesburg", "kampala", "adelaide", "montreal", "dhaka",
-            "shanghai", "bengaluru", "chennai", "budapest", "belgrade", "istanbul", "santiago" };
 
-    //select random city from array
-    public String random() {
-        Random generateRandom = new Random();
-        Integer random = generateRandom.nextInt(cities.length);
-        String gameWord = cities[random];
+	private static String [] cities = { "madrid", "jeddah", "nairobi", "johannesburg", "kampala", "adelaide", "montreal", "dhaka",
+    "shanghai", "bengaluru", "chennai", "budapest", "belgrade", "istanbul", "santiago" };
+	private static String gameWord = cities[(int) (Math.random() * cities.length)];
+	private static String dash = new String(new char[gameWord.length()]).replace("\0", "_");
+    private static int count = 0;
+    
+    public String getRandom (){
         return gameWord;
     }
 
-    //Split random city into array of it's constituent letters
-    public String [] split (String word){
-        String[] gameWordArray;
-        gameWordArray = word.split("");
-        return gameWordArray;
+    public String [] getCities (){
+        return cities;
     }
 
-    //Arraylist to represent hangman word
-    public ArrayList<String> fillArrayList (String [] letterArray){
-        ArrayList<String> filler = new ArrayList<String>();
-        for (int i = 0; i < letterArray.length; i++){
-            filler.add(i, "_");
-        }
-        return filler;
-    }
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
 
-    //Check if the user has guessed all letters correctly
-    public boolean check (ArrayList<String> fillerArray){
-        boolean wordStatus = true;
-        for (int i = 0; i < fillerArray.size(); i++){
-            String checkValue = "_";
-            if(fillerArray.get(i) == checkValue){
-                wordStatus = false;
-                return wordStatus;
-            }
-        }
-        return wordStatus;
-    }
+		while (count < 7 && dash.contains("*")) {
+			System.out.println("Guess any letter in the word");
+			System.out.println(dash);
+			String guess = scanner.next();
+			hang(guess);
+		}
+		scanner.close();
+	}
 
-    //get user input and compare with word
-    public ArrayList<String> compare (String userInput, String [] letterArray, ArrayList<String> fillerArray){
-        for (int i = 0; i < letterArray.length; i++){
-            if(letterArray[i] == userInput){
-                fillerArray.set(i, userInput);
-            }
-        }
-        return fillerArray;
-    }
+	public static void hang(String guess) {
+		String newDash = "";
+		for (int i = 0; i < gameWord.length(); i++) {
+			if (gameWord.charAt(i) == guess.charAt(0)) {
+				newDash += guess.charAt(0);
+			} else if (dash.charAt(i) != '*') {
+				newDash += gameWord.charAt(i);
+			} else {
+				newDash += "*";
+			}
+		}
 
-    //switch arraylist to string
-    public String userGuess (ArrayList<String> fillerArray){
-        String listString = String.join("", fillerArray);
-        return listString;
-    }
+		if (dash.equals(newDash)) {
+			count++;
+			hangmanImage();
+		} else {
+			dash = newDash;
+		}
+		if (dash.equals(gameWord)) {
+			System.out.println("Correct! You win! The word was " + gameWord);
+		}
+	}
+
+	public static void hangmanImage() {
+		if (count == 1) {
+			System.out.println("Wrong guess");
+			System.out.println("H");
+		}
+		if (count == 2) {
+			System.out.println("Wrong guess");
+			System.out.println("HA");
+		}
+		if (count == 3) {
+			System.out.println("Wrong guess");
+			System.out.println("HAN");
+		}
+		if (count == 4) {
+			System.out.println("Wrong guess");
+			System.out.println("HANG");
+		}
+		if (count == 5) {
+			System.out.println("Wrong guess");
+			System.out.println("HANGM");
+		}
+		if (count == 6) {
+			System.out.println("Wrong guess");
+			System.out.println("HANGMA");
+		}
+		if (count == 7) {
+			System.out.println("Wrong guess");
+            System.out.println("HANGMAN");
+            System.out.println("Gameword was" + gameWord);
+		}
+	}
 }
